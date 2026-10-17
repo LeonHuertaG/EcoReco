@@ -32,6 +32,7 @@ migrate_working_dir/
 .pub/
 /build/
 /coverage/
+/.flutter-plugins
 
 # Symbolication related
 app.*.symbols
@@ -43,6 +44,34 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+/android/app/build/
+/android/build/
+*.apk
+*.aab
+*.ipa
 
 # Widget Preview related
 .widget_preview/
+
+# Dependencias de Node.js y configuración local
+node_modules/
+.env
+.env.*
+!.env.example
+
+# Firmas de aplicaciones y claves privadas
+key.properties
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.pem
+*.key
+
+# Volcados locales y respaldos
+/backup/
+/backups/
+/dump/
+/backend/backup/
+/backend/backups/
+/backend/dump/
