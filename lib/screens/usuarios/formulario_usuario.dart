@@ -11,7 +11,7 @@ class FormularioUsuarioScreen extends StatefulWidget {
 }
 
 class _FormularioUsuarioScreenState extends State<FormularioUsuarioScreen> {
-  static const Color verde = Color(0xFF20794D);
+  static const Color naranja = Color(0xFFB94B10);
 
   final formKey = GlobalKey<FormState>();
 
@@ -60,7 +60,7 @@ class _FormularioUsuarioScreenState extends State<FormularioUsuarioScreen> {
         keyboardType: tipo,
         decoration: InputDecoration(
           labelText: etiqueta,
-          prefixIcon: Icon(icono, color: verde),
+          prefixIcon: Icon(icono, color: naranja),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
         validator: (valor) {
@@ -92,7 +92,7 @@ class _FormularioUsuarioScreenState extends State<FormularioUsuarioScreen> {
       backgroundColor: const Color(0xFFF5F8F4),
       appBar: AppBar(
         title: Text(editando ? 'Editar usuario' : 'Agregar usuario'),
-        backgroundColor: verde,
+        backgroundColor: naranja,
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -131,7 +131,7 @@ class _FormularioUsuarioScreenState extends State<FormularioUsuarioScreen> {
                       icon: const Icon(Icons.save),
                       label: const Text('Guardar usuario'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: verde,
+                        backgroundColor: naranja,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.all(16),
                       ),

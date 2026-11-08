@@ -10,8 +10,7 @@ class ListaUsuariosScreen extends StatefulWidget {
 }
 
 class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
-  static const Color verde = Color(0xFF20794D);
-  static const Color naranja = Color(0xFFF28C38);
+  static const Color naranja = Color(0xFFB94B10);
 
   final List<Map<String, String>> usuarios = [
     {
@@ -81,7 +80,7 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
       backgroundColor: const Color(0xFFF5F8F4),
       appBar: AppBar(
         title: const Text('Usuarios'),
-        backgroundColor: verde,
+        backgroundColor: naranja,
         foregroundColor: Colors.white,
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -101,7 +100,7 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: verde,
+                color: naranja,
               ),
             ),
             const SizedBox(height: 20),
@@ -123,7 +122,7 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
                             contentPadding: const EdgeInsets.all(12),
                             leading: const CircleAvatar(
                               backgroundColor: Color(0xFFE2F3E9),
-                              child: Icon(Icons.person, color: verde),
+                              child: Icon(Icons.person, color: naranja),
                             ),
                             title: Text(
                               usuario['nombre'] ?? '',
