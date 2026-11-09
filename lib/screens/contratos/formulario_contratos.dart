@@ -11,7 +11,7 @@ class FormularioContratoScreen extends StatefulWidget {
 }
 
 class _FormularioContratoScreenState extends State<FormularioContratoScreen> {
-  static const Color verde = Color(0xFF20794D);
+  static const Color naranja = Color(0xFFB94B10);
 
   final formKey = GlobalKey<FormState>();
 
@@ -70,7 +70,7 @@ class _FormularioContratoScreenState extends State<FormularioContratoScreen> {
         keyboardType: tipo,
         decoration: InputDecoration(
           labelText: etiqueta,
-          prefixIcon: Icon(icono, color: verde),
+          prefixIcon: Icon(icono, color: naranja),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
         ),
         validator: (valor) {
@@ -144,7 +144,7 @@ class _FormularioContratoScreenState extends State<FormularioContratoScreen> {
       backgroundColor: const Color(0xFFF5F8F4),
       appBar: AppBar(
         title: Text(editando ? 'Editar contrato' : 'Agregar contrato'),
-        backgroundColor: verde,
+        backgroundColor: naranja,
         foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
@@ -183,7 +183,7 @@ class _FormularioContratoScreenState extends State<FormularioContratoScreen> {
                     initialValue: estado,
                     decoration: InputDecoration(
                       labelText: 'Estado',
-                      prefixIcon: const Icon(Icons.info, color: verde),
+                      prefixIcon: const Icon(Icons.info, color: naranja),
                       border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -210,7 +210,7 @@ class _FormularioContratoScreenState extends State<FormularioContratoScreen> {
                       icon: const Icon(Icons.save),
                       label: const Text('Guardar contrato'),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: verde,
+                        backgroundColor: naranja,
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.all(16),
                       ),
