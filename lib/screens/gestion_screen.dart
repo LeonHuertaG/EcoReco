@@ -6,8 +6,7 @@ import 'contratos/lista_contratos.dart';
 class GestionScreen extends StatelessWidget {
   const GestionScreen({super.key});
 
-  static const Color verde = Color(0xFF20794D);
-  static const Color naranja = Color(0xFFF28C38);
+  static const Color naranja = Color(0xFFB94B10);
 
   @override
   Widget build(BuildContext context) {
@@ -15,7 +14,7 @@ class GestionScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFF5F8F4),
       appBar: AppBar(
         title: const Text('Panel de gestión'),
-        backgroundColor: verde,
+        backgroundColor: naranja,
         foregroundColor: Colors.white,
       ),
       body: ListView(
@@ -26,7 +25,7 @@ class GestionScreen extends StatelessWidget {
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: verde,
+              color: naranja,
             ),
           ),
           const SizedBox(height: 5),
@@ -40,7 +39,7 @@ class GestionScreen extends StatelessWidget {
             titulo: 'Usuarios',
             descripcion: 'Gestiona los usuarios registrados.',
             icono: Icons.people_alt_rounded,
-            colorIcono: verde,
+            colorIcono: naranja,
             destino: const ListaUsuariosScreen(),
           ),
           const SizedBox(height: 20),
@@ -94,7 +93,7 @@ class GestionScreen extends StatelessWidget {
                         style: const TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: verde,
+                          color: naranja,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -123,7 +122,7 @@ class GestionScreen extends StatelessWidget {
                 icon: const Icon(Icons.list),
                 label: Text('Ver ${titulo.toLowerCase()}'),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: verde,
+                  backgroundColor: naranja,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                   shape: RoundedRectangleBorder(
