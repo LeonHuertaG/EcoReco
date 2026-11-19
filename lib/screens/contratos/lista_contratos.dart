@@ -10,8 +10,7 @@ class ListaContratosScreen extends StatefulWidget {
 }
 
 class _ListaContratosScreenState extends State<ListaContratosScreen> {
-  static const Color verde = Color(0xFF20794D);
-  static const Color naranja = Color(0xFFF28C38);
+  static const Color naranja = Color(0xFFB94B10);
 
   final List<Map<String, String>> contratos = [
     {
@@ -85,7 +84,7 @@ class _ListaContratosScreenState extends State<ListaContratosScreen> {
       backgroundColor: const Color(0xFFF5F8F4),
       appBar: AppBar(
         title: const Text('Contratos'),
-        backgroundColor: verde,
+        backgroundColor: naranja,
         foregroundColor: Colors.white,
       ),
       floatingActionButton: FloatingActionButton.extended(
@@ -105,7 +104,7 @@ class _ListaContratosScreenState extends State<ListaContratosScreen> {
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: verde,
+                color: naranja,
               ),
             ),
             const SizedBox(height: 20),
@@ -130,7 +129,10 @@ class _ListaContratosScreenState extends State<ListaContratosScreen> {
                               children: [
                                 Row(
                                   children: [
-                                    const Icon(Icons.description, color: verde),
+                                    const Icon(
+                                      Icons.description,
+                                      color: naranja,
+                                    ),
                                     const SizedBox(width: 10),
                                     Expanded(
                                       child: Text(
@@ -169,7 +171,7 @@ class _ListaContratosScreenState extends State<ListaContratosScreen> {
                                 Chip(
                                   label: Text(contrato['estado'] ?? ''),
                                   backgroundColor: const Color(0xFFE2F3E9),
-                                  labelStyle: const TextStyle(color: verde),
+                                  labelStyle: const TextStyle(color: naranja),
                                 ),
                               ],
                             ),
