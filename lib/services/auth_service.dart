@@ -14,7 +14,7 @@ class LoginException implements Exception {
 class AuthService {
   static const String baseUrl = String.fromEnvironment(
     'API_BASE_URL',
-    defaultValue: 'https://ecorecoloco-api.onrender.com/api',
+    defaultValue: 'https://ecoreco-api.onrender.com/api',
   );
 
   static Future<UsuarioModel> login(String usuario, String password) async {
