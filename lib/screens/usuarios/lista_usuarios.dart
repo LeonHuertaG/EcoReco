@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../ui/eco_theme.dart';
+
 import 'formulario_usuario.dart';
 
 class ListaUsuariosScreen extends StatefulWidget {
@@ -10,7 +12,7 @@ class ListaUsuariosScreen extends StatefulWidget {
 }
 
 class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
-  static const Color naranja = Color(0xFFB94B10);
+  static const Color naranja = ecoOrange;
 
   final List<Map<String, String>> usuarios = [
     {
@@ -61,7 +63,10 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+            child: const Text(
+              'Eliminar',
+              style: TextStyle(color: Color(0xFF9E2724)),
+            ),
           ),
         ],
       ),
@@ -77,12 +82,7 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F8F4),
-      appBar: AppBar(
-        title: const Text('Usuarios'),
-        backgroundColor: naranja,
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(title: const Text('Usuarios')),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => abrirFormulario(),
         backgroundColor: naranja,
@@ -148,7 +148,7 @@ class _ListaUsuariosScreenState extends State<ListaUsuariosScreen> {
                                   tooltip: 'Eliminar',
                                   icon: const Icon(
                                     Icons.delete,
-                                    color: Colors.red,
+                                    color: Color(0xFF9E2724),
                                   ),
                                   onPressed: () => eliminarUsuario(index),
                                 ),

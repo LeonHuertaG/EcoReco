@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../services/chofer_api.dart';
+import '../../ui/eco_theme.dart';
 import 'chofer_servicio.dart';
 import 'chofer_widgets.dart';
 import 'manifiesto_pdf.dart';
@@ -86,43 +87,86 @@ class _ChoferParadaState extends State<ChoferParada> {
         final address = (stop['direccion'] as String?) ?? '';
         final sales = rows(stop, 'ventas');
         return ListView(
-          padding: const EdgeInsets.all(16),
+          padding: EdgeInsets.fromLTRB(
+            16,
+            16,
+            16,
+            16 + MediaQuery.paddingOf(context).bottom,
+          ),
           children: [
-            Text(
-              '${stop['cliente']}',
-              style: Theme.of(context).textTheme.headlineSmall,
+            EcoBanner(
+              title: '${stop['cliente']}',
+              subtitle: stopStatus(status),
+              icon: Icons.location_on_outlined,
             ),
-            Text(
-              '${stop['folio'] ?? widget.id} · ${stop['ruta']} · ${stop['turno']}',
-            ),
-            Text('${stop['fecha']} · ${stopStatus(status)}'),
-            if (address.isNotEmpty) ...[
-              Text(address),
-              Align(
-                alignment: Alignment.centerLeft,
-                child: TextButton.icon(
-                  onPressed: () => _openMap(address),
-                  icon: const Icon(Icons.map_outlined),
-                  label: const Text('Abrir mapa'),
+            const SizedBox(height: 12),
+            EcoSection(
+              title: 'Datos de la visita',
+              children: [
+                EcoField(Icons.tag, 'Folio', '${stop['folio'] ?? widget.id}'),
+                EcoField(
+                  Icons.event_outlined,
+                  'Fecha programada',
+                  '${stop['fecha']}'.replaceFirst('T', ' '),
                 ),
-              ),
-            ],
-            if (stop['telefono'] != null) Text('Teléfono ${stop['telefono']}'),
-            if (stop['llegada'] != null) Text('Llegada · ${stop['llegada']}'),
-            if (stop['cierre'] != null) Text('Cierre · ${stop['cierre']}'),
-            if (stop['observaciones'] != null)
-              Text('Observaciones · ${stop['observaciones']}'),
-            if (stop['insumos'] != null) Text('Insumos · ${stop['insumos']}'),
-            if (stop['motivo'] != null) Text('Motivo · ${stop['motivo']}'),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: TextButton.icon(
-                onPressed: () =>
-                    _open(_ClientVisits(api: widget.api, path: _path)),
-                icon: const Icon(Icons.history),
-                label: const Text('Historial de visitas al cliente'),
-              ),
+                EcoField(
+                  Icons.route_outlined,
+                  'Ruta y turno',
+                  '${stop['ruta']} · ${stop['turno']}',
+                ),
+                if (stop['llegada'] != null)
+                  EcoField(Icons.login, 'Llegada', '${stop['llegada']}'),
+                if (stop['cierre'] != null)
+                  EcoField(Icons.flag_outlined, 'Cierre', '${stop['cierre']}'),
+              ],
             ),
+            EcoSection(
+              title: 'Ubicación y contacto',
+              children: [
+                if (address.isNotEmpty) ...[
+                  EcoField(Icons.place_outlined, 'Dirección', address),
+                  OutlinedButton.icon(
+                    onPressed: () => _openMap(address),
+                    icon: const Icon(Icons.map_outlined),
+                    label: const Text('Abrir mapa'),
+                  ),
+                ],
+                if (stop['telefono'] != null)
+                  EcoField(
+                    Icons.phone_outlined,
+                    'Teléfono',
+                    '${stop['telefono']}',
+                  ),
+                TextButton.icon(
+                  onPressed: () =>
+                      _open(_ClientVisits(api: widget.api, path: _path)),
+                  icon: const Icon(Icons.history),
+                  label: const Text('Historial de visitas al cliente'),
+                ),
+              ],
+            ),
+            if (stop['observaciones'] != null ||
+                stop['insumos'] != null ||
+                stop['motivo'] != null)
+              EcoSection(
+                title: 'Notas de la visita',
+                children: [
+                  if (stop['observaciones'] != null)
+                    EcoField(
+                      Icons.notes,
+                      'Observaciones',
+                      '${stop['observaciones']}',
+                    ),
+                  if (stop['insumos'] != null)
+                    EcoField(
+                      Icons.inventory_2_outlined,
+                      'Insumos',
+                      '${stop['insumos']}',
+                    ),
+                  if (stop['motivo'] != null)
+                    EcoField(Icons.info_outline, 'Motivo', '${stop['motivo']}'),
+                ],
+              ),
             const SizedBox(height: 16),
             if (status == 'pendiente' &&
                 (stop['fecha_operable'] ?? stop['es_hoy']) == true)
@@ -162,31 +206,41 @@ class _ChoferParadaState extends State<ChoferParada> {
                 child: const Text('Registrar visita fallida'),
               ),
             ],
-            if (status == 'completada') ...[
-              OutlinedButton.icon(
-                onPressed: () =>
-                    _open(ChoferManifiesto(api: widget.api, path: _path)),
-                icon: const Icon(Icons.description_outlined),
-                label: const Text('Consultar manifiesto'),
-              ),
-              for (final item in rows(stop, 'residuos'))
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text('${item['nombre']}'),
-                  subtitle: Text(
-                    'Cantidad ${item['cantidad']} · ${item['peso']} kg',
+            if (status == 'completada')
+              EcoSection(
+                title: 'Recolección',
+                children: [
+                  for (final item in rows(stop, 'residuos'))
+                    EcoField(
+                      Icons.inventory_2_outlined,
+                      '${item['nombre']}',
+                      'Cantidad ${item['cantidad']} · ${item['peso']} kg',
+                    ),
+                  OutlinedButton.icon(
+                    onPressed: () =>
+                        _open(ChoferManifiesto(api: widget.api, path: _path)),
+                    icon: const Icon(Icons.description_outlined),
+                    label: const Text('Consultar manifiesto'),
                   ),
-                ),
-            ],
-            if (stop['tiene_foto'] == 1)
-              TextButton(
-                onPressed: () => _evidence('foto'),
-                child: const Text('Ver fotografía'),
+                ],
               ),
-            if (stop['tiene_firma'] == 1)
-              TextButton(
-                onPressed: () => _evidence('firma'),
-                child: const Text('Ver firma'),
+            if (stop['tiene_foto'] == 1 || stop['tiene_firma'] == 1)
+              EcoSection(
+                title: 'Evidencias',
+                children: [
+                  if (stop['tiene_foto'] == 1)
+                    TextButton.icon(
+                      onPressed: () => _evidence('foto'),
+                      icon: const Icon(Icons.photo_outlined),
+                      label: const Text('Ver fotografía'),
+                    ),
+                  if (stop['tiene_firma'] == 1)
+                    TextButton.icon(
+                      onPressed: () => _evidence('firma'),
+                      icon: const Icon(Icons.draw_outlined),
+                      label: const Text('Ver firma'),
+                    ),
+                ],
               ),
             if (sales.isNotEmpty) ...[
               const SizedBox(height: 12),
@@ -199,12 +253,15 @@ class _ChoferParadaState extends State<ChoferParada> {
                 style: Theme.of(context).textTheme.titleMedium,
               ),
               for (final payment in rows(stop, 'pagos'))
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(
-                    '${payment['metodo']} · ${mxn(payment['importe'])}',
+                Card(
+                  child: ListTile(
+                    leading: const EcoIcon(Icons.description_outlined),
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(
+                      '${payment['metodo']} · ${mxn(payment['importe'])}',
+                    ),
+                    subtitle: Text('${payment['fecha']}'),
                   ),
-                  subtitle: Text('${payment['fecha']}'),
                 ),
             ],
           ],
@@ -231,7 +288,12 @@ class _ChoferParadaState extends State<ChoferParada> {
               for (final line in rows(stop, 'conceptos'))
                 Text('${line['concepto']} · ${mxn(line['subtotal'])}'),
             if (isCurrent) Text('IVA ${mxn(sale['iva'])}'),
-            Text('Total ${mxn(sale['total'])} · Saldo ${mxn(sale['saldo'])}'),
+            EcoField(Icons.receipt_outlined, 'Total', mxn(sale['total'])),
+            EcoField(
+              Icons.account_balance_wallet_outlined,
+              'Saldo',
+              mxn(sale['saldo']),
+            ),
             if (isCurrent) TicketVentaPdfButton(stop: stop, sale: sale),
             if (canPay)
               TextButton(
@@ -329,11 +391,14 @@ class _ClientVisitsState extends State<_ClientVisits> {
         return ListView(
           children: [
             for (final visit in visits)
-              ListTile(
-                title: Text(
-                  '${visit['folio'] ?? visit['pk_recoleccion']} · ${stopStatus(visit['estado'] as String)}',
+              Card(
+                child: ListTile(
+                  leading: const EcoIcon(Icons.description_outlined),
+                  title: Text(
+                    '${visit['folio'] ?? visit['pk_recoleccion']} · ${stopStatus(visit['estado'] as String)}',
+                  ),
+                  subtitle: Text('${visit['fecha']} · ${visit['ruta']}'),
                 ),
-                subtitle: Text('${visit['fecha']} · ${visit['ruta']}'),
               ),
           ],
         );
@@ -580,15 +645,33 @@ class _ManifestState extends State<ChoferManifiesto> {
       builder: (manifest) => ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text(
-            '${manifest['folio']}',
-            style: Theme.of(context).textTheme.headlineSmall,
+          EcoBanner(
+            title: '${manifest['folio']}',
+            subtitle: 'Manifiesto de recolección',
+            icon: Icons.description_outlined,
           ),
-          Text('Emitido ${manifest['fecha_emision']}'),
-          Text('Cliente · ${manifest['cliente']}'),
-          Text('Chofer · ${manifest['chofer']}'),
-          Text('Origen · ${manifest['origen']}'),
-          Text('Destino · ${manifest['destino'] ?? 'Por registrar'}'),
+          EcoSection(
+            title: 'Datos del manifiesto',
+            children: [
+              EcoField(
+                Icons.event_outlined,
+                'Emitido',
+                '${manifest['fecha_emision']}',
+              ),
+              EcoField(
+                Icons.business_outlined,
+                'Cliente',
+                '${manifest['cliente']}',
+              ),
+              EcoField(Icons.person_outline, 'Chofer', '${manifest['chofer']}'),
+              EcoField(Icons.trip_origin, 'Origen', '${manifest['origen']}'),
+              EcoField(
+                Icons.place_outlined,
+                'Destino',
+                '${manifest['destino'] ?? 'Por registrar'}',
+              ),
+            ],
+          ),
           if (manifest['fecha_entrega'] != null)
             Text('Entregado · ${manifest['fecha_entrega']}')
           else
@@ -612,11 +695,14 @@ class _ManifestState extends State<ChoferManifiesto> {
                 : null,
           ),
           for (final item in rows(manifest, 'residuos'))
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              title: Text('${item['descripcion']}'),
-              subtitle: Text(
-                'Cantidad ${item['cantidad']} · Peso ${item['peso']} kg',
+            Card(
+              child: ListTile(
+                leading: const EcoIcon(Icons.description_outlined),
+                contentPadding: EdgeInsets.zero,
+                title: Text('${item['descripcion']}'),
+                subtitle: Text(
+                  'Cantidad ${item['cantidad']} · Peso ${item['peso']} kg',
+                ),
               ),
             ),
         ],

@@ -1,39 +1,28 @@
 import 'package:flutter/material.dart';
 
+import '../ui/eco_theme.dart';
+
 import 'usuarios/lista_usuarios.dart';
 import 'contratos/lista_contratos.dart';
 
 class GestionScreen extends StatelessWidget {
   const GestionScreen({super.key});
 
-  static const Color naranja = Color(0xFFB94B10);
+  static const Color naranja = ecoOrange;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F8F4),
-      appBar: AppBar(
-        title: const Text('Panel de gestión'),
-        backgroundColor: naranja,
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(title: const Text('Panel de gestión')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [
-          const Text(
-            'Administración',
-            style: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: naranja,
-            ),
+          const EcoBanner(
+            title: 'Administración',
+            subtitle: 'Usuarios y contratos',
+            icon: Icons.admin_panel_settings_outlined,
           ),
-          const SizedBox(height: 5),
-          const Text(
-            'Gestiona usuarios y contratos',
-            style: TextStyle(color: Colors.grey),
-          ),
-          const SizedBox(height: 25),
+          const SizedBox(height: 16),
           crearCard(
             context,
             titulo: 'Usuarios',
@@ -65,10 +54,6 @@ class GestionScreen extends StatelessWidget {
     required Widget destino,
   }) {
     return Card(
-      elevation: 3,
-      color: Colors.white,
-      shadowColor: Colors.black12,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -101,7 +86,7 @@ class GestionScreen extends StatelessWidget {
                         descripcion,
                         style: const TextStyle(
                           fontSize: 13,
-                          color: Colors.grey,
+                          color: Color(0xFF42534B),
                         ),
                       ),
                     ],

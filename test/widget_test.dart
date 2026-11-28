@@ -11,6 +11,12 @@ void main() {
     await tester.pumpWidget(const MyApp());
 
     expect(find.text('EcoReco'), findsOneWidget);
+    final heading = find.text('Inicia sesión');
+    final context = tester.element(heading);
+    expect(
+      tester.widget<Text>(heading).style?.color,
+      Theme.of(context).colorScheme.onSurface,
+    );
     expect(find.text('Usuario o Correo'), findsOneWidget);
     expect(find.text('Contraseña'), findsOneWidget);
     expect(find.text('INGRESAR'), findsOneWidget);

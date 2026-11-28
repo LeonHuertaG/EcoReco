@@ -4,6 +4,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:printing/printing.dart';
 
 import '../../services/chofer_api.dart';
+import '../../ui/eco_theme.dart';
 import '../chofer/chofer_widgets.dart';
 import '../chofer/manifiesto_pdf.dart';
 import 'agenda_screen.dart';
@@ -133,10 +134,12 @@ class _ClienteHomeState extends State<ClienteHome> {
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
-        Text(
-          'Mis recolecciones',
-          style: Theme.of(context).textTheme.headlineSmall,
+        EcoBanner(
+          title: 'Mis recolecciones',
+          subtitle: widget.nombre,
+          icon: Icons.event_available_outlined,
         ),
+        const SizedBox(height: 10),
         if (pending.isEmpty) const Text('No tienes recolecciones pendientes.'),
         for (final visit in pending) _visitCard(visit, today),
         if (history.isNotEmpty) _heading('Historial de visitas'),
@@ -161,15 +164,18 @@ class _ClienteHomeState extends State<ClienteHome> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              '${visit['folio']} · $date',
-              style: Theme.of(context).textTheme.titleMedium,
-            ),
-            Text(
+            EcoField(Icons.event_outlined, '${visit['folio']}', date),
+            EcoField(
+              Icons.schedule_outlined,
+              'Hora y respuesta',
               '${(visit['fecha'] as String).substring(11, 16)} · ${visit['respuesta_cliente']}',
             ),
             if (visit['servicio'] != 'pendiente')
-              Text(stopStatus(visit['servicio'] as String)),
+              EcoField(
+                Icons.info_outline,
+                'Estado del servicio',
+                stopStatus(visit['servicio'] as String),
+              ),
             if (editable)
               Wrap(
                 children: [
@@ -204,6 +210,12 @@ class _ClienteHomeState extends State<ClienteHome> {
   Widget _accountList(Json data) => ListView(
     padding: const EdgeInsets.all(16),
     children: [
+      EcoBanner(
+        title: 'Mi cuenta',
+        subtitle: widget.nombre,
+        icon: Icons.folder_open_outlined,
+      ),
+      const SizedBox(height: 10),
       for (final notice in rows(data, 'avisos'))
         Card(
           child: ListTile(
@@ -213,9 +225,12 @@ class _ClienteHomeState extends State<ClienteHome> {
           ),
         ),
       for (final client in rows(data, 'clientes'))
-        ListTile(
-          title: Text('${client['nombre']}'),
-          subtitle: Text('${client['direccion'] ?? ''}'),
+        Card(
+          child: ListTile(
+            leading: const EcoIcon(Icons.folder_open_outlined),
+            title: Text('${client['nombre']}'),
+            subtitle: Text('${client['direccion'] ?? ''}'),
+          ),
         ),
       _accountLink('Contratos', 'contratos', data),
       _accountLink('Estado de cuenta', 'ventas', data),
@@ -235,79 +250,84 @@ class _ClienteHomeState extends State<ClienteHome> {
 
   Widget _accountLink(String title, String key, Json data) {
     final items = rows(data, key);
-    return ListTile(
-      title: Text(title),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () => Navigator.push(
-        context,
-        MaterialPageRoute<void>(
-          builder: (context) => Scaffold(
-            appBar: AppBar(
-              title: Text(title),
-              actions: [
-                if (key != 'manifiestos' && items.isNotEmpty)
-                  IconButton(
-                    tooltip: 'Compartir PDF',
-                    icon: const Icon(Icons.picture_as_pdf_outlined),
-                    onPressed: () async {
-                      try {
-                        final pdf = pw.Document(
-                          title: title,
-                          author: 'EcoReco',
-                        );
-                        pdf.addPage(
-                          pw.MultiPage(
-                            pageFormat: PdfPageFormat.a4,
-                            maxPages: items.length + 1,
-                            build: (_) => [
-                              pw.Header(level: 0, text: 'EcoReco · $title'),
-                              for (final item in items)
-                                pw.Padding(
-                                  padding: const pw.EdgeInsets.only(bottom: 10),
-                                  child: pw.Text(
-                                    '${item['folio']} · ${_documentSummary(key, item)}',
+    return Card(
+      child: ListTile(
+        leading: const EcoIcon(Icons.folder_open_outlined),
+        title: Text(title),
+        trailing: const Icon(Icons.chevron_right),
+        onTap: () => Navigator.push(
+          context,
+          MaterialPageRoute<void>(
+            builder: (context) => Scaffold(
+              appBar: AppBar(
+                title: Text(title),
+                actions: [
+                  if (key != 'manifiestos' && items.isNotEmpty)
+                    IconButton(
+                      tooltip: 'Compartir PDF',
+                      icon: const Icon(Icons.picture_as_pdf_outlined),
+                      onPressed: () async {
+                        try {
+                          final pdf = pw.Document(
+                            title: title,
+                            author: 'EcoReco',
+                          );
+                          pdf.addPage(
+                            pw.MultiPage(
+                              pageFormat: PdfPageFormat.a4,
+                              maxPages: items.length + 1,
+                              build: (_) => [
+                                pw.Header(level: 0, text: 'EcoReco · $title'),
+                                for (final item in items)
+                                  pw.Padding(
+                                    padding: const pw.EdgeInsets.only(
+                                      bottom: 10,
+                                    ),
+                                    child: pw.Text(
+                                      '${item['folio']} · ${_documentSummary(key, item)}',
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          );
+                          await Printing.sharePdf(
+                            bytes: await pdf.save(),
+                            filename: '$key.pdf',
+                          );
+                        } on Exception catch (error) {
+                          if (context.mounted) showMessage(context, error);
+                        }
+                      },
+                    ),
+                ],
+              ),
+              body: items.isEmpty
+                  ? const Center(child: Text('No hay registros disponibles.'))
+                  : ListView.builder(
+                      itemCount: items.length,
+                      itemBuilder: (context, index) {
+                        final item = items[index];
+                        return ListTile(
+                          title: Text('${item['folio']}'),
+                          subtitle: Text(_documentSummary(key, item)),
+                          trailing: key == 'manifiestos'
+                              ? const Icon(Icons.chevron_right)
+                              : null,
+                          onTap: key != 'manifiestos'
+                              ? null
+                              : () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute<void>(
+                                    builder: (_) => _CustomerManifest(
+                                      api: widget.api,
+                                      id: item['id'].toString(),
+                                    ),
                                   ),
                                 ),
-                            ],
-                          ),
                         );
-                        await Printing.sharePdf(
-                          bytes: await pdf.save(),
-                          filename: '$key.pdf',
-                        );
-                      } on Exception catch (error) {
-                        if (context.mounted) showMessage(context, error);
-                      }
-                    },
-                  ),
-              ],
+                      },
+                    ),
             ),
-            body: items.isEmpty
-                ? const Center(child: Text('No hay registros disponibles.'))
-                : ListView.builder(
-                    itemCount: items.length,
-                    itemBuilder: (context, index) {
-                      final item = items[index];
-                      return ListTile(
-                        title: Text('${item['folio']}'),
-                        subtitle: Text(_documentSummary(key, item)),
-                        trailing: key == 'manifiestos'
-                            ? const Icon(Icons.chevron_right)
-                            : null,
-                        onTap: key != 'manifiestos'
-                            ? null
-                            : () => Navigator.push(
-                                context,
-                                MaterialPageRoute<void>(
-                                  builder: (_) => _CustomerManifest(
-                                    api: widget.api,
-                                    id: item['id'].toString(),
-                                  ),
-                                ),
-                              ),
-                      );
-                    },
-                  ),
           ),
         ),
       ),
@@ -355,21 +375,43 @@ class _CustomerManifestState extends State<_CustomerManifest> {
       builder: (data) => ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text(
-            '${data['folio']}',
-            style: Theme.of(context).textTheme.headlineSmall,
+          EcoBanner(
+            title: '${data['folio']}',
+            subtitle: 'Manifiesto de recolección',
+            icon: Icons.description_outlined,
           ),
-          Text('Origen · ${data['origen'] ?? 'Sin dato'}'),
-          Text('Destino · ${data['destino'] ?? 'Sin dato'}'),
-          Text('Chofer · ${data['chofer'] ?? 'Sin dato'}'),
-          Text('Emisión · ${data['emision']}'),
-          if (data['entrega'] != null) Text('Entrega · ${data['entrega']}'),
+          EcoSection(
+            title: 'Datos del manifiesto',
+            children: [
+              EcoField(
+                Icons.trip_origin,
+                'Origen',
+                '${data['origen'] ?? 'Sin dato'}',
+              ),
+              EcoField(
+                Icons.place_outlined,
+                'Destino',
+                '${data['destino'] ?? 'Sin dato'}',
+              ),
+              EcoField(
+                Icons.person_outline,
+                'Chofer',
+                '${data['chofer'] ?? 'Sin dato'}',
+              ),
+              EcoField(Icons.event_outlined, 'Emisión', '${data['emision']}'),
+              if (data['entrega'] != null)
+                EcoField(Icons.flag_outlined, 'Entrega', '${data['entrega']}'),
+            ],
+          ),
           ManifiestoPdfButton(manifest: data, items: rows(data, 'items')),
           for (final item in rows(data, 'items'))
-            ListTile(
-              title: Text('${item['descripcion']}'),
-              subtitle: Text(
-                'Cantidad ${item['cantidad']} · ${item['peso']} kg',
+            Card(
+              child: ListTile(
+                leading: const EcoIcon(Icons.folder_open_outlined),
+                title: Text('${item['descripcion']}'),
+                subtitle: Text(
+                  'Cantidad ${item['cantidad']} · ${item['peso']} kg',
+                ),
               ),
             ),
         ],

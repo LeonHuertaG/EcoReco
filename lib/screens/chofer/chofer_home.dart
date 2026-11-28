@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../services/chofer_api.dart';
+import '../../ui/eco_theme.dart';
 import 'chofer_caja.dart';
 import 'chofer_parada.dart';
 import 'chofer_widgets.dart';
@@ -67,10 +68,12 @@ class _ChoferHomeState extends State<ChoferHome> {
         return ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            Text(
-              widget.nombre,
-              style: Theme.of(context).textTheme.headlineSmall,
+            EcoBanner(
+              title: widget.nombre,
+              subtitle: 'Paradas pendientes',
+              icon: Icons.local_shipping_outlined,
             ),
+            const SizedBox(height: 10),
             Wrap(
               spacing: 8,
               children: [
@@ -119,19 +122,21 @@ class _ChoferHomeState extends State<ChoferHome> {
                 onChanged: (date) => setState(() => _cashDay = date),
               ),
               for (final shift in shifts)
-                ListTile(
-                  leading: const Icon(Icons.account_balance_wallet_outlined),
-                  title: Text(shift['nombre'] as String),
-                  subtitle: const Text('Pagos, viáticos y corte'),
-                  trailing: const Icon(Icons.chevron_right),
-                  onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => ChoferCaja(
-                        api: widget.api,
-                        day: day!,
-                        shift: shift['id'] as String,
-                        name: shift['nombre'] as String,
+                Card(
+                  child: ListTile(
+                    leading: const Icon(Icons.account_balance_wallet_outlined),
+                    title: Text(shift['nombre'] as String),
+                    subtitle: const Text('Pagos, viáticos y corte'),
+                    trailing: const Icon(Icons.chevron_right),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => ChoferCaja(
+                          api: widget.api,
+                          day: day!,
+                          shift: shift['id'] as String,
+                          name: shift['nombre'] as String,
+                        ),
                       ),
                     ),
                   ),
@@ -162,7 +167,7 @@ class _ChoferHomeState extends State<ChoferHome> {
           ),
         Card(
           child: ListTile(
-            leading: const Icon(Icons.location_on_outlined),
+            leading: const EcoIcon(Icons.location_on_outlined),
             title: Text('${stop['cliente']}'),
             subtitle: Text(
               '${stop['fecha'].toString().replaceFirst('T', ' ')} · '
@@ -265,30 +270,33 @@ class _HistoryState extends State<_History> {
               return ListView(
                 children: [
                   for (final item in items)
-                    ListTile(
-                      title: Text('${item['folio']} · ${item['cliente']}'),
-                      subtitle: Text(
-                        widget.manifests
-                            ? '${item['fecha']}'
-                            : '${item['fecha']} · Total ${mxn(item['total'])} · Saldo ${mxn(item['saldo'])}',
+                    Card(
+                      child: ListTile(
+                        leading: const EcoIcon(Icons.receipt_long_outlined),
+                        title: Text('${item['folio']} · ${item['cliente']}'),
+                        subtitle: Text(
+                          widget.manifests
+                              ? '${item['fecha']}'
+                              : '${item['fecha']} · Total ${mxn(item['total'])} · Saldo ${mxn(item['saldo'])}',
+                        ),
+                        onTap: item['fk_recoleccion'] == null
+                            ? null
+                            : () async {
+                                final id = item['fk_recoleccion'].toString();
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => widget.manifests
+                                        ? ChoferManifiesto(
+                                            api: widget.api,
+                                            path: 'paradas/$id',
+                                          )
+                                        : ChoferParada(api: widget.api, id: id),
+                                  ),
+                                );
+                                if (mounted) _refresh();
+                              },
                       ),
-                      onTap: item['fk_recoleccion'] == null
-                          ? null
-                          : () async {
-                              final id = item['fk_recoleccion'].toString();
-                              await Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => widget.manifests
-                                      ? ChoferManifiesto(
-                                          api: widget.api,
-                                          path: 'paradas/$id',
-                                        )
-                                      : ChoferParada(api: widget.api, id: id),
-                                ),
-                              );
-                              if (mounted) _refresh();
-                            },
                     ),
                 ],
               );

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
 import '../../services/chofer_api.dart';
+import '../../ui/eco_theme.dart';
 import 'chofer_widgets.dart';
 
 class ChoferServicio extends StatefulWidget {
@@ -227,17 +228,27 @@ class _ChoferServicioState extends State<ChoferServicio> {
             child: ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                Text(
-                  'Importes para el cliente',
-                  style: Theme.of(context).textTheme.titleLarge,
-                ),
-                for (final line in rows(quote, 'conceptos'))
-                  Text('${line['concepto']} · ${mxn(line['subtotal'])}'),
-                Text('Subtotal ${mxn(quote['subtotal'])}'),
-                Text('IVA ${mxn(quote['iva'])}'),
-                Text(
-                  'Total ${mxn(quote['total'])}',
-                  style: Theme.of(context).textTheme.titleMedium,
+                EcoSection(
+                  title: 'Importes para el cliente',
+                  children: [
+                    for (final line in rows(quote, 'conceptos'))
+                      EcoField(
+                        Icons.receipt_outlined,
+                        '${line['concepto']}',
+                        mxn(line['subtotal']),
+                      ),
+                    EcoField(
+                      Icons.payments_outlined,
+                      'Subtotal',
+                      mxn(quote['subtotal']),
+                    ),
+                    EcoField(Icons.percent, 'IVA', mxn(quote['iva'])),
+                    EcoField(
+                      Icons.account_balance_wallet_outlined,
+                      'Total',
+                      mxn(quote['total']),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 12),
                 const Text(

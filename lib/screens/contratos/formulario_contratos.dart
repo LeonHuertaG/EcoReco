@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../ui/eco_theme.dart';
+
 class FormularioContratoScreen extends StatefulWidget {
   final Map<String, String>? contrato;
 
@@ -11,7 +13,7 @@ class FormularioContratoScreen extends StatefulWidget {
 }
 
 class _FormularioContratoScreenState extends State<FormularioContratoScreen> {
-  static const Color naranja = Color(0xFFB94B10);
+  static const Color naranja = ecoOrange;
 
   final formKey = GlobalKey<FormState>();
 
@@ -141,11 +143,8 @@ class _FormularioContratoScreenState extends State<FormularioContratoScreen> {
     final editando = widget.contrato != null;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F8F4),
       appBar: AppBar(
         title: Text(editando ? 'Editar contrato' : 'Agregar contrato'),
-        backgroundColor: naranja,
-        foregroundColor: Colors.white,
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),

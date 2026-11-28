@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../services/chofer_api.dart';
+import '../../ui/eco_theme.dart';
 import 'chofer_widgets.dart';
 
 class ChoferCaja extends StatefulWidget {
@@ -75,10 +76,31 @@ class _ChoferCajaState extends State<ChoferCaja> {
         return ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            Text(widget.day, style: Theme.of(context).textTheme.headlineSmall),
-            Text('Pagos recibidos ${mxn(data['total_pagos'])}'),
-            Text('Pagos en efectivo ${mxn(data['efectivo'])}'),
-            Text('Viáticos gastados ${mxn(data['gastos'])}'),
+            EcoBanner(
+              title: widget.name,
+              subtitle: widget.day,
+              icon: Icons.account_balance_wallet_outlined,
+            ),
+            EcoSection(
+              title: 'Resumen de caja',
+              children: [
+                EcoField(
+                  Icons.payments_outlined,
+                  'Pagos recibidos',
+                  mxn(data['total_pagos']),
+                ),
+                EcoField(
+                  Icons.money_outlined,
+                  'Pagos en efectivo',
+                  mxn(data['efectivo']),
+                ),
+                EcoField(
+                  Icons.receipt_long_outlined,
+                  'Viáticos gastados',
+                  mxn(data['gastos']),
+                ),
+              ],
+            ),
             if (cut != null) ...[
               const SizedBox(height: 16),
               _CutDetails(cut: cut),
@@ -99,14 +121,20 @@ class _ChoferCajaState extends State<ChoferCaja> {
             const SizedBox(height: 16),
             Text('Movimientos', style: Theme.of(context).textTheme.titleLarge),
             for (final payment in rows(data, 'pagos'))
-              ListTile(
-                title: Text('${payment['folio']} · ${payment['metodo']}'),
-                trailing: Text(mxn(payment['importe'])),
+              Card(
+                child: ListTile(
+                  leading: const EcoIcon(Icons.account_balance_wallet_outlined),
+                  title: Text('${payment['folio']} · ${payment['metodo']}'),
+                  trailing: Text(mxn(payment['importe'])),
+                ),
               ),
             for (final expense in rows(data, 'viaticos'))
-              ListTile(
-                title: Text('${expense['concepto']}'),
-                trailing: Text('-${mxn(expense['importe'])}'),
+              Card(
+                child: ListTile(
+                  leading: const EcoIcon(Icons.account_balance_wallet_outlined),
+                  title: Text('${expense['concepto']}'),
+                  trailing: Text('-${mxn(expense['importe'])}'),
+                ),
               ),
           ],
         );
@@ -240,12 +268,24 @@ class _CloseFormState extends State<_CloseForm> {
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text('Cobros en efectivo ${mxn(widget.summary['efectivo'])}'),
-          Text('Viáticos ${mxn(widget.summary['gastos'])}'),
+          EcoField(
+            Icons.payments_outlined,
+            'Cobros en efectivo',
+            mxn(widget.summary['efectivo']),
+          ),
+          EcoField(
+            Icons.payments_outlined,
+            'Viáticos',
+            mxn(widget.summary['gastos']),
+          ),
           const Text(
             'Al cerrar el turno se bloquean nuevos cobros y viáticos de esta jornada para el turno seleccionado.',
           ),
-          Text('Otros métodos ${mxn(widget.summary['otros_metodos'])}'),
+          EcoField(
+            Icons.payments_outlined,
+            'Otros métodos',
+            mxn(widget.summary['otros_metodos']),
+          ),
           Text(
             'Efectivo a entregar ${mxn(widget.summary['efectivo_a_entregar'])}',
           ),
@@ -269,18 +309,38 @@ class _CutDetails extends StatelessWidget {
   final Json cut;
 
   @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.start,
+  Widget build(BuildContext context) => EcoSection(
+    title: 'Detalle del corte',
     children: [
       Text('Corte ${cut['fk_corte']} · ${cut['turno']}'),
-      Text('Jornada ${cut['jornada']}'),
+      EcoField(Icons.event_outlined, 'Jornada', '${cut['jornada']}'),
       if (cut['efectivo'] != null)
-        Text('Cobrado en efectivo ${mxn(cut['efectivo'])}'),
+        EcoField(
+          Icons.payments_outlined,
+          'Cobrado en efectivo',
+          mxn(cut['efectivo']),
+        ),
       if (cut['otros_metodos'] != null)
-        Text('Otros métodos ${mxn(cut['otros_metodos'])}'),
-      Text('Total cobrado ${mxn(cut['total_ventas'])}'),
-      Text('Total de viáticos ${mxn(cut['total_gastos'])}'),
-      Text('Efectivo a entregar ${mxn(cut['efectivo_esperado'])}'),
+        EcoField(
+          Icons.payments_outlined,
+          'Otros métodos',
+          mxn(cut['otros_metodos']),
+        ),
+      EcoField(
+        Icons.payments_outlined,
+        'Total cobrado',
+        mxn(cut['total_ventas']),
+      ),
+      EcoField(
+        Icons.payments_outlined,
+        'Total de viáticos',
+        mxn(cut['total_gastos']),
+      ),
+      EcoField(
+        Icons.payments_outlined,
+        'Efectivo a entregar',
+        mxn(cut['efectivo_esperado']),
+      ),
       if (cut['observaciones'] != null) Text('${cut['observaciones']}'),
 
       Text(

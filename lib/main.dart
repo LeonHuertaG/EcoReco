@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'screens/auth/login_screen.dart';
+import 'ui/eco_theme.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,18 +12,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = ColorScheme.fromSeed(seedColor: const Color(0xFFB94B10));
     return MaterialApp(
       title: 'EcoReco',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: colors,
-        appBarTheme: AppBarThemeData(
-          backgroundColor: colors.primary,
-          foregroundColor: colors.onPrimary,
-        ),
-        useMaterial3: true,
-      ),
+      theme: ecoTheme(),
       home: const LoginScreen(),
     );
   }

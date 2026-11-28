@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../ui/eco_theme.dart';
+
 import 'formulario_contratos.dart';
 
 class ListaContratosScreen extends StatefulWidget {
@@ -10,7 +12,7 @@ class ListaContratosScreen extends StatefulWidget {
 }
 
 class _ListaContratosScreenState extends State<ListaContratosScreen> {
-  static const Color naranja = Color(0xFFB94B10);
+  static const Color naranja = ecoOrange;
 
   final List<Map<String, String>> contratos = [
     {
@@ -65,7 +67,10 @@ class _ListaContratosScreenState extends State<ListaContratosScreen> {
           ),
           TextButton(
             onPressed: () => Navigator.pop(dialogContext, true),
-            child: const Text('Eliminar', style: TextStyle(color: Colors.red)),
+            child: const Text(
+              'Eliminar',
+              style: TextStyle(color: Color(0xFF9E2724)),
+            ),
           ),
         ],
       ),
@@ -81,12 +86,7 @@ class _ListaContratosScreenState extends State<ListaContratosScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F8F4),
-      appBar: AppBar(
-        title: const Text('Contratos'),
-        backgroundColor: naranja,
-        foregroundColor: Colors.white,
-      ),
+      appBar: AppBar(title: const Text('Contratos')),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => abrirFormulario(),
         backgroundColor: naranja,
@@ -129,10 +129,7 @@ class _ListaContratosScreenState extends State<ListaContratosScreen> {
                               children: [
                                 Row(
                                   children: [
-                                    const Icon(
-                                      Icons.description,
-                                      color: naranja,
-                                    ),
+                                    const EcoIcon(Icons.description_outlined),
                                     const SizedBox(width: 10),
                                     Expanded(
                                       child: Text(
@@ -156,17 +153,33 @@ class _ListaContratosScreenState extends State<ListaContratosScreen> {
                                       tooltip: 'Eliminar',
                                       icon: const Icon(
                                         Icons.delete,
-                                        color: Colors.red,
+                                        color: Color(0xFF9E2724),
                                       ),
                                       onPressed: () => eliminarContrato(index),
                                     ),
                                   ],
                                 ),
                                 const SizedBox(height: 8),
-                                Text('Usuario: ${contrato['usuario']}'),
-                                Text('Inicio: ${contrato['inicio']}'),
-                                Text('Vencimiento: ${contrato['fin']}'),
-                                Text('Monto: \$${contrato['monto']}'),
+                                EcoField(
+                                  Icons.person_outline,
+                                  'Usuario',
+                                  '${contrato['usuario']}',
+                                ),
+                                EcoField(
+                                  Icons.event_outlined,
+                                  'Inicio',
+                                  '${contrato['inicio']}',
+                                ),
+                                EcoField(
+                                  Icons.event_busy_outlined,
+                                  'Vencimiento',
+                                  '${contrato['fin']}',
+                                ),
+                                EcoField(
+                                  Icons.payments_outlined,
+                                  'Monto',
+                                  '\$${contrato['monto']}',
+                                ),
                                 const SizedBox(height: 8),
                                 Chip(
                                   label: Text(contrato['estado'] ?? ''),

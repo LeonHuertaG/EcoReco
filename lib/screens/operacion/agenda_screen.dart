@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../services/chofer_api.dart';
+import '../../ui/eco_theme.dart';
 import '../chofer/chofer_widgets.dart';
 
 Future<String?> pickOperationDay(
@@ -228,7 +229,10 @@ class _AgendaScreenState extends State<AgendaScreen> {
                 _selected.clear();
               }),
             ),
-            const Text('Selecciona las paradas en el orden de visita.'),
+            const EcoSection(
+              title: 'Paradas programadas',
+              children: [Text('Selecciona las paradas en el orden de visita.')],
+            ),
             if (visits.isEmpty) const Text('Sin visitas programadas.'),
             for (final visit in visits) _visit(visit, today),
           ],

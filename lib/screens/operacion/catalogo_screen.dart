@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../services/chofer_api.dart';
+import '../../ui/eco_theme.dart';
 import '../chofer/chofer_widgets.dart';
 
 class CatalogoScreen extends StatefulWidget {
@@ -104,6 +105,7 @@ class _CatalogoScreenState extends State<CatalogoScreen> {
           for (final item in rows(data, 'items'))
             Card(
               child: ListTile(
+                leading: const EcoIcon(Icons.folder_outlined),
                 title: Text('${item[data['title']]}'),
                 subtitle: Text(item['estado'] == 1 ? 'Activo' : 'Inactivo'),
                 onTap: _busy ? null : () => _edit(data, item),
@@ -422,16 +424,17 @@ class _CatalogoFormState extends State<_CatalogoForm> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              Text(
-                '${widget.data['label']}',
-                style: Theme.of(context).textTheme.titleLarge,
+              EcoSection(
+                title: '${widget.data['label']}',
+                children: [
+                  for (final field in _fields())
+                    Padding(
+                      key: ValueKey(field['key']),
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: _input(field),
+                    ),
+                ],
               ),
-              for (final field in _fields())
-                Padding(
-                  key: ValueKey(field['key']),
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: _input(field),
-                ),
               if (_newClient) ...[
                 Text(
                   'Acceso del cliente',

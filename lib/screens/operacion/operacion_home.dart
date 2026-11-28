@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../services/chofer_api.dart';
+import '../../ui/eco_theme.dart';
 import '../chofer/chofer_caja.dart';
 import '../chofer/chofer_widgets.dart';
 import 'agenda_screen.dart';
@@ -57,7 +58,12 @@ class _OperacionHomeState extends State<OperacionHome> {
       builder: (data) => ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          Text(widget.nombre, style: Theme.of(context).textTheme.headlineSmall),
+          EcoBanner(
+            title: widget.nombre,
+            subtitle: widget.admin ? 'Administración' : 'Gestión comercial',
+            icon: Icons.dashboard_outlined,
+          ),
+          const SizedBox(height: 12),
           _entry(
             'Calendario y rutas',
             Icons.event_available,
@@ -96,7 +102,7 @@ class _OperacionHomeState extends State<OperacionHome> {
 
   Widget _entry(String label, IconData icon, VoidCallback tap) => Card(
     child: ListTile(
-      leading: Icon(icon),
+      leading: EcoIcon(icon),
       title: Text(label),
       trailing: const Icon(Icons.chevron_right),
       onTap: tap,
@@ -161,7 +167,7 @@ class _ReportsState extends State<_Reports> {
             ),
             Card(
               child: ListTile(
-                leading: const Icon(Icons.monitor_heart_outlined),
+                leading: const EcoIcon(Icons.monitor_heart_outlined),
                 title: const Text('Estado del servidor'),
                 subtitle: Text(
                   '${server['solicitudes']} solicitudes · ${server['errores']} errores del servidor\n'
@@ -170,27 +176,39 @@ class _ReportsState extends State<_Reports> {
                 ),
               ),
             ),
-            const Text('Ventas'),
+            const SizedBox(height: 14),
+            Text('Ventas', style: Theme.of(context).textTheme.titleLarge),
             for (final item in rows(data, 'ventas'))
-              ListTile(
-                title: Text('${item['folio']} · ${item['cliente']}'),
-                subtitle: Text(
-                  'Total ${mxn(item['total'])} · Saldo ${mxn(item['saldo'])}',
+              Card(
+                child: ListTile(
+                  leading: const EcoIcon(Icons.analytics_outlined),
+                  title: Text('${item['folio']} · ${item['cliente']}'),
+                  subtitle: Text(
+                    'Total ${mxn(item['total'])} · Saldo ${mxn(item['saldo'])}',
+                  ),
                 ),
               ),
-            const Text('Incidencias'),
+            const SizedBox(height: 14),
+            Text('Incidencias', style: Theme.of(context).textTheme.titleLarge),
             for (final item in rows(data, 'incidencias'))
-              ListTile(
-                title: Text('${item['folio']} · ${item['cliente']}'),
-                subtitle: Text('${item['motivo']}'),
-              ),
-            const Text('Bitácora'),
-            for (final item in rows(data, 'eventos'))
-              ListTile(
-                title: Text(
-                  '${item['accion']} · ${item['recurso']} #${item['recurso_id']}',
+              Card(
+                child: ListTile(
+                  leading: const EcoIcon(Icons.analytics_outlined),
+                  title: Text('${item['folio']} · ${item['cliente']}'),
+                  subtitle: Text('${item['motivo']}'),
                 ),
-                subtitle: Text('${item['hora']} · ${item['usuario']}'),
+              ),
+            const SizedBox(height: 14),
+            Text('Bitácora', style: Theme.of(context).textTheme.titleLarge),
+            for (final item in rows(data, 'eventos'))
+              Card(
+                child: ListTile(
+                  leading: const EcoIcon(Icons.analytics_outlined),
+                  title: Text(
+                    '${item['accion']} · ${item['recurso']} #${item['recurso_id']}',
+                  ),
+                  subtitle: Text('${item['hora']} · ${item['usuario']}'),
+                ),
               ),
           ],
         );
